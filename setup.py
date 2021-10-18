@@ -7,6 +7,8 @@ setuptools.setup(
     packages=['toolplot'],
     install_requires=[
         'matplotlib',
+        'toolstr',
+        'tooltime',
     ],
 )
 
