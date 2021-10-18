@@ -1,2 +1,13 @@
 
-to show all available fonts see http://jonathansoma.com/lede/data-studio/matplotlib/list-all-fonts-available-in-matplotlib-plus-samples/
+# toolplot
+- `toolplot` is a convenience wrapper around many `matplotlib` functions
+- proper README coming later
+
+
+## Install
+```bash
+git clone https://github.com/sslivkoff/toolplot
+cd toolplot
+python3 -m pip install -e ./
+```
+
