@@ -4,7 +4,11 @@ import toolstr
 
 
 def format_xticks(
-    rotation=-20, timestamps=False, toolstr_kwargs=None, xticks_kwargs=None, tickmap=None,
+    rotation=-20,
+    timestamps=False,
+    toolstr_kwargs=None,
+    xticks_kwargs=None,
+    tickmap=None,
 ):
 
     # set defaults
@@ -17,14 +21,13 @@ def format_xticks(
 
     # set formatter
     tick_locations, tick_texts = plt.xticks()
-    if max(tick_locations) > 10:
-        if tickmap is not None:
-            f = lambda x, p: toolstr.format(tickmap[x], **toolstr_kwargs)
-        else:
-            f = lambda x, p: toolstr.format(x, **toolstr_kwargs)
-        plt.gca().get_xaxis().set_major_formatter(
-            matplotlib.ticker.FuncFormatter(f)
-        )
+    if tickmap is not None:
+        f = lambda x, p: toolstr.format(tickmap[x], **toolstr_kwargs)
+    else:
+        f = lambda x, p: toolstr.format(x, **toolstr_kwargs)
+    plt.gca().get_xaxis().set_major_formatter(
+        matplotlib.ticker.FuncFormatter(f)
+    )
 
     # set rotation
     if rotation is not None:
@@ -49,11 +52,10 @@ def format_yticks(toolstr_kwargs=None, yticks_kwargs=None):
 
     # set formatter
     tick_locations, tick_texts = plt.yticks()
-    if max(tick_locations) > 10:
-        f = lambda x, p: toolstr.format(x, **toolstr_kwargs)
-        plt.gca().get_yaxis().set_major_formatter(
-            matplotlib.ticker.FuncFormatter(f)
-        )
+    f = lambda x, p: toolstr.format(x, **toolstr_kwargs)
+    plt.gca().get_yaxis().set_major_formatter(
+        matplotlib.ticker.FuncFormatter(f)
+    )
 
     # set other kwargs
     if yticks_kwargs is not None:
