@@ -34,6 +34,7 @@ plot_specs = {
         'xlim': ['Number', 'Number'],
         'ylim': ['Number', 'Number'],
         'title': 'Text',
+        'legend_kwargs': 'Map',
     }
 }
 
@@ -57,12 +58,15 @@ def plot(plot_datum):
 
     if plot_datum.get('ys'):
         for subplot in plot_datum['ys']:
+            sub_x = subplot.get('x')
+            if sub_x is None:
+                sub_x = x
             y = subplot.get('y')
             y_kwargs = subplot.get('y_kwargs', {})
 
             # plot points
-            if x is not None:
-                plt.plot(x, y, **y_kwargs)
+            if sub_x is not None:
+                plt.plot(sub_x, y, **y_kwargs)
             else:
                 plt.plot(y, **y_kwargs)
 
@@ -106,7 +110,7 @@ def plot(plot_datum):
     # TODO: add capability for legend outside of plot:
     #     https://www.statology.org/matplotlib-legend-outside-plot/
     if legend or plot_datum.get('legend_kwargs') is not None:
-        legend_kwargs = plot_datum.get('legend', {})
+        legend_kwargs = plot_datum.get('legend_kwargs', {})
         plt.legend(**legend_kwargs)
 
     if plot_datum.get('xlim') is not None:
