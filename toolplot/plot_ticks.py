@@ -66,6 +66,7 @@ def add_tick_grid(
     alpha=0.1,
     color='black',
     linestyle='--',
+    linewidth=1,
     xtick_grid=True,
     ytick_grid=True,
 ):
@@ -80,6 +81,7 @@ def add_tick_grid(
                 color=color,
                 alpha=alpha,
                 zorder=-999,
+                linewidth=linewidth,
             )
 
     if ytick_grid:
@@ -90,6 +92,7 @@ def add_tick_grid(
                 color=color,
                 alpha=alpha,
                 zorder=-999,
+                linewidth=linewidth,
             )
 
     plt.xlim(xlim)

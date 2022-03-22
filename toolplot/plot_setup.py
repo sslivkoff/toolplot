@@ -26,4 +26,7 @@ def setup_plot_formatting():
     plt.rc('figure', figsize=[12, 12])  # size of plots
 
     plt.rcParams['figure.facecolor'] = '#FFFFFF'
+    plt.rcParams['font.family'] = 'Monospace'
+
+    plt.rc('lines', linewidth=3)  # width of lines
 
