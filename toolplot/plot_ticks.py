@@ -6,6 +6,7 @@ import toolstr
 def format_xticks(
     rotation=-20,
     timestamps=False,
+    dates=False,
     toolstr_kwargs=None,
     xticks_kwargs=None,
     tickmap=None,
@@ -15,6 +16,9 @@ def format_xticks(
     if toolstr_kwargs is None:
         toolstr_kwargs = {}
 
+    if dates:
+        toolstr_kwargs.setdefault('format_type', 'timestamp')
+        toolstr_kwargs.setdefault('representation', 'TimestampDate')
     if timestamps:
         toolstr_kwargs.setdefault('format_type', 'timestamp')
         toolstr_kwargs.setdefault('representation', 'TimestampISO')
