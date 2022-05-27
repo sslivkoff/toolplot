@@ -1,0 +1,19 @@
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+
+[project]
+name = "toolplot"
+readme = "README.md"
+requires-python = ">=3.7"
+dynamic = ["version", "description"]
+license = {file = "LICENSE"}
+dependencies = [
+    "tooltime>=0.2.0",
+    "toolstr>=0.4.0",
+    "typing-extensions>=4.0.0",
+    "matplotlib>=3.1",
+    "numpy>=1.19.0"
+]

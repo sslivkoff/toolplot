@@ -1,3 +1,5 @@
+"""toolplot is a alternative API to plotting backends"""
+
 from .plot_create import *
 from .plot_save import *
 from .plot_setup import *
