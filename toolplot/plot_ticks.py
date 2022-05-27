@@ -4,12 +4,13 @@ import toolstr
 
 
 def format_xticks(
-    rotation=-20,
+    rotation=-25,
     timestamps=False,
     dates=False,
     toolstr_kwargs=None,
     xticks_kwargs=None,
     tickmap=None,
+    formatter=None
 ):
 
     # set defaults
@@ -25,7 +26,9 @@ def format_xticks(
 
     # set formatter
     tick_locations, tick_texts = plt.xticks()
-    if tickmap is not None:
+    if formatter is not None:
+        f = formatter
+    elif tickmap is not None:
         f = lambda x, p: toolstr.format(tickmap[x], **toolstr_kwargs)
     else:
         f = lambda x, p: toolstr.format(x, **toolstr_kwargs)
@@ -48,15 +51,20 @@ def format_xticks(
         plt.xticks(**xticks_kwargs)
 
 
-def format_yticks(toolstr_kwargs=None, yticks_kwargs=None):
+def format_yticks(toolstr_kwargs=None, yticks_kwargs=None, formatter=None):
 
     # set defaults
     if toolstr_kwargs is None:
         toolstr_kwargs = {}
 
     # set formatter
-    tick_locations, tick_texts = plt.yticks()
-    f = lambda x, p: toolstr.format(x, **toolstr_kwargs)
+    if yticks_kwargs is None:
+        yticks_kwargs = {}
+    tick_locations, tick_texts = plt.yticks(**yticks_kwargs)
+    if formatter is not None:
+        f = formatter
+    else:
+        f = lambda x, p: toolstr.format(x, **toolstr_kwargs)
     plt.gca().get_yaxis().set_major_formatter(
         matplotlib.ticker.FuncFormatter(f)
     )

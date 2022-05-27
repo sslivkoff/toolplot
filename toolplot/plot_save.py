@@ -37,6 +37,8 @@ def save_figure(
                 formats.append('png')
             if len(formats) == 0:
                 formats.append('png')
+        if figure_dir is None or name is None:
+            raise Exception('must specify path or (name and figure dir)')
         paths = {
             format: os.path.join(figure_dir, format, name + '.' + format)
             for format in formats
@@ -46,7 +48,6 @@ def save_figure(
     save_kwargs = {'bbox_inches': 'tight'}
 
     # save figure to each format
-    paths = {}
     for path in paths.values():
         os.makedirs(os.path.dirname(path), exist_ok=True)
         if verbose:
@@ -61,4 +62,3 @@ def save_figure(
             path = os.path.join(figure_dir, format, historical_name + format)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             shutil.copy(paths[format], path)
-

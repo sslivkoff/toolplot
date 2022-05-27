@@ -1,3 +1,5 @@
+import typing
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -29,6 +31,8 @@ plot_specs = {
         'hist': 'Series',
         'hist_kwargs': 'Map',
         'tickgrid': 'Boolean',
+        'xtick_format': typing.Mapping,
+        'ytick_format': typing.Mapping,
         'xlabel': 'Text',
         'ylabel': 'Text',
         'xlim': ['Number', 'Number'],
@@ -101,7 +105,11 @@ def plot(plot_datum):
             plt.title(name)
         else:
             raise Exception('unknown position for name: ' + str(name_position))
-    plot_ticks.format_yticks()
+
+    if plot_datum.get('xtick_format') is not None:
+        plot_ticks.format_xticks(**plot_datum.get('xtick_format'))
+    if plot_datum.get('ytick_format') is not None:
+        plot_ticks.format_yticks(**plot_datum.get('ytick_format'))
 
     title = plot_datum.get('title')
     if title is not None:
