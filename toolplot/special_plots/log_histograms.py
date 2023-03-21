@@ -4,7 +4,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def hist_log_x(x, *bin_args, xlim=None, n_bins=30, bin_min=None, **bin_kwargs):
+def plot_log_x_histogram(
+    x,
+    *bin_args,
+    xlim=None,
+    n_bins=30,
+    bin_min=None,
+    **bin_kwargs,
+):
     if xlim is None:
         if bin_min is None:
             xmin = max(min(x), 0.00000000001)
