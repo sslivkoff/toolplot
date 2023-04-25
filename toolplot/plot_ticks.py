@@ -1,6 +1,32 @@
-import matplotlib
-import matplotlib.pyplot as plt
+from __future__ import annotations
+
+import matplotlib  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
 import toolstr
+
+
+def set_labels(
+    *,
+    title: str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    y_percentage: bool = False,
+    y_decimals: int | None = None,
+    x_decimals: int | None = None,
+) -> None:
+    if title is not None:
+        plt.title(title)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
+    format_xticks()
+    if y_percentage:
+        toolstr_kwargs = {'percentage': True}
+    else:
+        toolstr_kwargs = {}
+    format_yticks(toolstr_kwargs=toolstr_kwargs)
+    add_tick_grid()
 
 
 def format_xticks(
