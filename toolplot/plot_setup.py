@@ -1,5 +1,7 @@
+from __future__ import annotations
 
-def setup_plot_formatting():
+
+def setup_plot_formatting() -> None:
     """set up matplotlib plot formatting"""
 
     # TODO: load from config
