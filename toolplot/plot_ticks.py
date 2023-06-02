@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import typing
+
 import matplotlib  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import toolstr
@@ -30,15 +32,14 @@ def set_labels(
 
 
 def format_xticks(
-    rotation=-25,
-    timestamps=False,
-    dates=False,
-    toolstr_kwargs=None,
-    xticks_kwargs=None,
-    tickmap=None,
-    formatter=None
-):
-
+    rotation: int = -25,
+    timestamps: bool = False,
+    dates: bool = False,
+    toolstr_kwargs: typing.Any | None = None,
+    xticks_kwargs: typing.Any | None = None,
+    tickmap: typing.Mapping[typing.Any, str] | None = None,
+    formatter: typing.Callable[..., str] | None = None,
+) -> None:
     # set defaults
     if toolstr_kwargs is None:
         toolstr_kwargs = {}
@@ -77,8 +78,11 @@ def format_xticks(
         plt.xticks(**xticks_kwargs)
 
 
-def format_yticks(toolstr_kwargs=None, yticks_kwargs=None, formatter=None):
-
+def format_yticks(
+    toolstr_kwargs: typing.Any | None = None,
+    yticks_kwargs: typing.Any | None = None,
+    formatter: typing.Callable[..., str] | None = None,
+) -> None:
     # set defaults
     if toolstr_kwargs is None:
         toolstr_kwargs = {}
@@ -101,13 +105,13 @@ def format_yticks(toolstr_kwargs=None, yticks_kwargs=None, formatter=None):
 
 
 def add_tick_grid(
-    alpha=0.1,
-    color='black',
-    linestyle='--',
-    linewidth=1,
-    xtick_grid=True,
-    ytick_grid=True,
-):
+    alpha: float = 0.1,
+    color: str = 'black',
+    linestyle: str = '--',
+    linewidth: int | float = 1,
+    xtick_grid: bool = True,
+    ytick_grid: bool = True,
+) -> None:
     xlim = plt.xlim()
     ylim = plt.ylim()
 
