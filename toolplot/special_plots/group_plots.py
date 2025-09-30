@@ -163,6 +163,11 @@ def create_scatter_object(
             visible=visible,
         )
     elif mode == 'area_%':
+        if color is None:
+            import plotly.io as pio
+            colorway = pio.templates['plotly_white'].layout.colorway
+            color = colorway[g % len(colorway)]
+
         return go.Scatter(
             x=x,
             y=y,
@@ -173,7 +178,6 @@ def create_scatter_object(
             groupnorm='percent',
             fill='tonexty' if ((g is not None) and (g > 0)) else 'tozeroy',
             fillcolor=color,
-            opacity=1.0,
             hovertemplate=('%{y:.1f}%'),
             customdata=custom,
         )
