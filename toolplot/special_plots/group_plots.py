@@ -29,7 +29,7 @@ def plot_groups(
     xaxis_hoverformat: str | None = None,
     bar_outline_width: int | float = 0.0,
     bar_gap: int | float = 0,
-    bar_x_center: bool = True,
+    bar_x_center: bool = False,
     show: bool = True,
 ) -> go.Figure:
     import polars as pl
