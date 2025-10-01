@@ -50,10 +50,10 @@ def plot_groups(
 
     # add total
     total: pl.DataFrame | None = None
-    if include_total:
-        total = data.group_by('timestamp', maintain_order=True).agg(
+    if include_total and mode != 'area_%':
+        total = data.group_by('timestamp').agg(
             pl.sum(metric_column)
-        )
+        ).sort('timestamp')
         total_scatter = create_scatter_object(
             x=total['timestamp'],
             y=total[metric_column],
