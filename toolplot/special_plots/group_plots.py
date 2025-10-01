@@ -6,7 +6,7 @@ if typing.TYPE_CHECKING:
     import polars as pl
     import plotly.graph_objects as go  # type: ignore
 
-    PlotGroupsMode = typing.Literal['line', 'area', 'area_%']
+    PlotGroupsMode = typing.Literal['line', 'area', 'area_%', 'bar']
 
 
 def plot_groups(
@@ -50,10 +50,12 @@ def plot_groups(
 
     # add total
     total: pl.DataFrame | None = None
-    if include_total and mode != 'area_%':
-        total = data.group_by('timestamp').agg(
-            pl.sum(metric_column)
-        ).sort('timestamp')
+    if include_total and mode == 'line':
+        total = (
+            data.group_by('timestamp')
+            .agg(pl.sum(metric_column))
+            .sort('timestamp')
+        )
         total_scatter = create_scatter_object(
             x=total['timestamp'],
             y=total[metric_column],
@@ -61,7 +63,7 @@ def plot_groups(
             color='black',
             metric_format=metric_format,
             visible=total_visible,
-            width=5,
+            line_width=5,
             mode=mode,
             g=None,
         )
@@ -118,6 +120,9 @@ def plot_groups(
         legend=get_legend_params(label_style=get_label_params()),
     )
 
+    if mode == 'bar':
+        fig.update_layout(barmode='relative', bargap=0.0, bargroupgap=0.0)
+
     if show:
         show_figure(fig)
 
@@ -125,8 +130,8 @@ def plot_groups(
 
 
 def create_scatter_object(
-    x: list[typing.Any] | pl.Series,
-    y: list[typing.Any] | pl.Series,
+    x: pl.Series,
+    y: pl.Series,
     mode: PlotGroupsMode,
     *,
     group: str,
@@ -134,7 +139,7 @@ def create_scatter_object(
     color: str | None = None,
     metric_format: dict[str, typing.Any] | None = None,
     visible: typing.Literal['legendonly', True, False] = True,
-    width: int = 3,
+    line_width: int = 3,
 ) -> go.Scatter:
     import plotly.graph_objects as go
     import toolstr
@@ -148,13 +153,22 @@ def create_scatter_object(
         else:
             custom.append(toolstr.format(value, **metric_format))
 
+    if color is None:
+        import plotly.io as pio  # type: ignore
+
+        colorway = pio.templates['plotly_white'].layout.colorway
+        if g is None:
+            color = 'black'
+        else:
+            color = colorway[g % len(colorway)]
+
     if mode == 'line':
         return go.Scatter(
             x=x,
             y=y,
             mode='lines',
             name=group,
-            line=dict(color=color, width=width),
+            line=dict(color=color, width=line_width),
             legendgroup=group,
             customdata=custom,
             line_simplify=False,
@@ -162,12 +176,49 @@ def create_scatter_object(
             connectgaps=False,
             visible=visible,
         )
-    elif mode == 'area_%':
-        if color is None:
-            import plotly.io as pio
-            colorway = pio.templates['plotly_white'].layout.colorway
-            color = colorway[g % len(colorway)]
+    elif mode == 'bar':
+        import polars as pl
 
+        if x.dtype == pl.Datetime:
+            ts = pl.Series(x).cast(pl.Datetime)
+            nxt = ts.shift(-1).fill_null(ts.dt.offset_by('1mo'))
+            dur = nxt - ts
+            width = (dur.dt.total_seconds() * 1000).to_list()
+            offset = 0
+        else:
+            width = None
+            offset = None
+
+        bar = go.Bar(
+            x=x,
+            y=y,
+            name=group,
+            marker=dict(color=color, line=dict(width=0)),
+            hovertemplate=group + ': %{customdata}<extra></extra>',
+            legendgroup=group,
+            customdata=custom,
+            width=width,
+            offset=offset,
+        )
+        try:
+            bar._figure._has_bar = True  # won't exist yet when returning
+        except Exception:
+            pass
+        return bar
+    elif mode == 'area':
+        return go.Scatter(
+            x=x,
+            y=y,
+            mode='lines',
+            name=group,
+            line=dict(color=color, width=0),
+            stackgroup='one',
+            fill='tonexty' if ((g is not None) and (g > 0)) else 'tozeroy',
+            fillcolor=color,
+            hovertemplate=('%{y}'),
+            customdata=custom,
+        )
+    elif mode == 'area_%':
         return go.Scatter(
             x=x,
             y=y,
@@ -181,6 +232,7 @@ def create_scatter_object(
             hovertemplate=('%{y:.1f}%'),
             customdata=custom,
         )
+
     else:
         raise Exception('invalid mode: ' + str(mode))
 
@@ -214,8 +266,12 @@ def get_group_data(
             if len(head_null) > 0:
                 head_pad = head_null[-1].fill_null(0)
                 agg = pl.concat([agg, head_pad]).sort('timestamp')
+    elif mode == 'area':
+        pass
     elif mode == 'area_%':
         pass
+    elif mode == 'bar':
+        agg = agg.with_columns(pl.col(metric_column).fill_null(0))
     else:
         raise Exception()
 
@@ -280,7 +336,7 @@ def get_xaxis_params(
         **grid_style,  # type: ignore
     )
 
-    if mode == 'area_%':
+    if mode in ['area', 'area_%', 'bar']:
         params['showspikes'] = True
         params['spikemode'] = 'across'
         params['spikesnap'] = 'cursor'
