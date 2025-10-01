@@ -24,3 +24,19 @@ dependencies = [
 dev = [
     "mypy>=1.4.1",
 ]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+implicit_reexport = true
+files = ["toolplot"]
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+ignore = ["F401", "F403"]
+
