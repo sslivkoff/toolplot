@@ -27,6 +27,9 @@ def plot_groups(
     total_visible: typing.Literal['legendonly', True, False] = True,
     set_ylim: bool = False,
     xaxis_hoverformat: str | None = None,
+    bar_outline_width: int | float = 0.0,
+    bar_gap: int | float = 0,
+    bar_x_center: bool = True,
     show: bool = True,
 ) -> go.Figure:
     import polars as pl
@@ -87,6 +90,9 @@ def plot_groups(
             color=colors.get(group),
             metric_format=metric_format,
             mode=mode,
+            bar_gap=bar_gap,
+            bar_outline_width=bar_outline_width,
+            bar_x_center=bar_x_center,
         )
         fig.add_trace(group_scatter)
 
@@ -140,6 +146,9 @@ def create_scatter_object(
     metric_format: dict[str, typing.Any] | None = None,
     visible: typing.Literal['legendonly', True, False] = True,
     line_width: int = 3,
+    bar_outline_width: int | float = 0.1,
+    bar_gap: int | float = 0,
+    bar_x_center: bool = True,
 ) -> go.Scatter:
     import plotly.graph_objects as go
     import toolstr
@@ -181,10 +190,16 @@ def create_scatter_object(
 
         if x.dtype == pl.Datetime:
             ts = pl.Series(x).cast(pl.Datetime)
-            nxt = ts.shift(-1).fill_null(ts.dt.offset_by('1mo'))
+            nxt = ts.shift(-1)
+            nxt = nxt.fill_null(ts[-1] + (ts[-1] - ts[-2]))
             dur = nxt - ts
-            width = (dur.dt.total_seconds() * 1000).to_list()
-            offset = 0
+            dur = dur * (1 - bar_gap)
+            width = dur.dt.total_seconds() * 1000
+            if bar_x_center:
+                offset: pl.Series | int | float | None = -width / 2
+            else:
+                offset = 0
+            # width = width.to_list()
         else:
             width = None
             offset = None
@@ -199,6 +214,8 @@ def create_scatter_object(
             customdata=custom,
             width=width,
             offset=offset,
+            marker_line_width=bar_outline_width,
+            marker_line_color='black',
         )
         try:
             bar._figure._has_bar = True  # won't exist yet when returning
