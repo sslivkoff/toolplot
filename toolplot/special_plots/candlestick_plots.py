@@ -38,4 +38,3 @@ def plot_ohlc_candles_raw_overlay(values, indices, alpha=0.3):
 def plot_ohlc_as_lines(ohlc):
     for item in ['open', 'high', 'low', 'close']:
         plt.plot(ohlc[item], '.-', label=item, linewidth=0.5)
-

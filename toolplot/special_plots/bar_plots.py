@@ -10,11 +10,9 @@ if typing.TYPE_CHECKING:
 
 
 def plot_bar(data: typing.Mapping[str, Series]):
-
     bottom = 0
 
     for series_name, series in data.items():
-
         plt.bar(
             range(len(series)),
             height=series,

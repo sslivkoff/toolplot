@@ -26,4 +26,3 @@ def plot_log_x_histogram(
     #     plt.hist(counts, bins=bins, **bin_kwargs)
 
     plt.xscale('log')
-

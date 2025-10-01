@@ -9,7 +9,7 @@ def plot_2d_log_histogram(
     bins: int
     | (int, int)
     | (typing.Sequence[int | float] | typing.Sequence[int | float]) = 10,
-    cmap="nipy_spectral_r",
+    cmap='nipy_spectral_r',
     colorbar: bool = True,
     log: bool = True,
     xtick_format: typing.Mapping[str, typing.Any] | None = None,
@@ -52,7 +52,7 @@ def plot_2d_log_histogram(
     else:
         norm = None
 
-    plt.imshow(hist[0], norm=norm, cmap=cmap, origin="lower")
+    plt.imshow(hist[0], norm=norm, cmap=cmap, origin='lower')
 
     if colorbar:
         cbar = plt.colorbar()
@@ -60,7 +60,9 @@ def plot_2d_log_histogram(
         cbar.outline.set_visible(False)
         if ctick_format is not None:
             ctick_locs = cbar.get_ticks()
-            ctick_labels = [toolstr.format(loc, **ctick_format) for loc in ctick_locs]
+            ctick_labels = [
+                toolstr.format(loc, **ctick_format) for loc in ctick_locs
+            ]
             cbar.ax.yaxis.set_major_locator(FixedLocator(ctick_locs))
             cbar.ax.set_yticklabels(ctick_labels)
 
@@ -102,7 +104,6 @@ def create_2d_bins(
     x_bin_min: float = 1e-14,
     y_bin_min: float = 1e-14,
 ) -> (typing.Sequence[float], typing.Sequence[float]):
-
     if isinstance(bins, int):
         n_xbins = bins
         n_ybins = bins

@@ -39,12 +39,11 @@ plot_specs = {
         'ylim': ['Number', 'Number'],
         'title': 'Text',
         'legend_kwargs': 'Map',
-    }
+    },
 }
 
 
 def plot(plot_datum):
-
     legend = False
 
     # extract args
@@ -135,7 +134,6 @@ def plot(plot_datum):
 
 
 def plot_subplots(plot_data):
-
     common = plot_data.get('common', {})
     merge = common.get('merge')
     n_subplots = len(plot_data['plots'])
@@ -151,7 +149,6 @@ def plot_subplots(plot_data):
     figure.setdefault('figsize', [10, subplot_height * n_rows])
     plt.figure(**figure)
     for sp, (plot_id, plot_datum) in enumerate(plot_data['plots'].items()):
-
         plot_datum = dict(plot_datum)
         for key, value in common.items():
             if key == 'merge':
@@ -166,4 +163,3 @@ def plot_subplots(plot_data):
         if sp == 0 and plot_data.get('title') is not None:
             plt.title(plot_data['title'])
         plot(plot_datum=plot_datum)
-

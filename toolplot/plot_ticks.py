@@ -139,4 +139,3 @@ def add_tick_grid(
 
     plt.xlim(xlim)
     plt.ylim(ylim)
-

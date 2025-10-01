@@ -31,4 +31,3 @@ def setup_plot_formatting() -> None:
     plt.rcParams['font.family'] = 'Monospace'
 
     plt.rc('lines', linewidth=3)  # width of lines
-
