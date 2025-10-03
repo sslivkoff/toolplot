@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from .. import plotly_utils
 
 if typing.TYPE_CHECKING:
     import polars as pl
@@ -31,6 +32,8 @@ def plot_groups(
     bar_gap: int | float = 0,
     bar_x_center: bool = False,
     show: bool = True,
+    png_path: str | None = None,
+    html_path: str | None = None,
 ) -> go.Figure:
     import polars as pl
     import plotly.graph_objects as go
@@ -129,8 +132,9 @@ def plot_groups(
     if mode == 'bar':
         fig.update_layout(barmode='relative', bargap=0.0, bargroupgap=0.0)
 
-    if show:
-        show_figure(fig)
+    plotly_utils._output_figure(
+        fig=fig, show=show, html_path=html_path, png_path=png_path
+    )
 
     return fig
 
@@ -426,20 +430,6 @@ def get_legend_params(
         x=1.02,
         font=label_style,
     )
-
-
-def show_figure(fig: go.Figure) -> None:
-    hires_config = {
-        'toImageButtonOptions': {
-            'format': 'png',
-            'filename': 'kalshi-volume',
-            'height': 600,
-            'width': 1000,
-            'scale': 2,
-        },
-        'displayModeBar': False,
-    }
-    fig.show(config=hires_config)
 
 
 # def _project():
