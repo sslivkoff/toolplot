@@ -31,9 +31,12 @@ def plot_groups(
     bar_outline_width: int | float = 0.0,
     bar_gap: int | float = 0,
     bar_x_center: bool = False,
-    show: bool = True,
+    show: bool | None = None,
+    show_kwargs: dict[str, typing.Any] | None = None,
     png_path: str | None = None,
+    png_kwargs: dict[str, typing.Any] | None = None,
     html_path: str | None = None,
+    html_kwargs: dict[str, typing.Any] | None = None,
 ) -> go.Figure:
     import polars as pl
     import plotly.graph_objects as go
@@ -133,7 +136,13 @@ def plot_groups(
         fig.update_layout(barmode='relative', bargap=0.0, bargroupgap=0.0)
 
     plotly_utils._output_figure(
-        fig=fig, show=show, html_path=html_path, png_path=png_path
+        fig=fig,
+        show=show,
+        show_kwargs=show_kwargs,
+        html_path=html_path,
+        html_kwargs=html_kwargs,
+        png_path=png_path,
+        png_kwargs=png_kwargs,
     )
 
     return fig
