@@ -7,7 +7,7 @@ if typing.TYPE_CHECKING:
     import polars as pl
     import plotly.graph_objects as go  # type: ignore
 
-    PlotGroupsMode = typing.Literal['line', 'area', 'area_%', 'bar']
+    PlotGroupsMode = typing.Literal['line', 'line_%', 'area', 'area_%', 'bar']
 
 
 def plot_groups(
@@ -56,6 +56,18 @@ def plot_groups(
 
     # initialize figure
     fig = go.Figure()
+
+    # process data
+    if mode == 'line_%':
+        data = data.with_columns(
+            (
+                pl.col(metric_column)
+                / pl.col(metric_column).sum().over('timestamp')
+            ).alias(metric_column)
+        )
+        if metric_format is None:
+            metric_format = {}
+        metric_format['percentage'] = True
 
     # add total
     total: pl.DataFrame | None = None
@@ -198,6 +210,21 @@ def create_scatter_object(
             connectgaps=False,
             visible=visible,
         )
+    elif mode == 'line_%':
+        return go.Scatter(
+            x=x,
+            y=y * 100,
+            mode='lines',
+            name=group,
+            line=dict(color=color, width=line_width),
+            legendgroup=group,
+            customdata=custom,
+            line_simplify=False,
+            hovertemplate=group + ': %{customdata}<extra></extra>',
+            connectgaps=False,
+            visible=visible,
+        )
+
     elif mode == 'bar':
         import polars as pl
 
@@ -290,6 +317,13 @@ def get_group_data(
         .sort('timestamp')
     )
     if mode == 'line':
+        if add_head_pad:
+            non_null = agg.filter(pl.col(metric_column).is_not_null())
+            head_null = agg.filter(pl.col.timestamp < non_null['timestamp'][0])
+            if len(head_null) > 0:
+                head_pad = head_null[-1].fill_null(0)
+                agg = pl.concat([agg, head_pad]).sort('timestamp')
+    elif mode == 'line_%':
         if add_head_pad:
             non_null = agg.filter(pl.col(metric_column).is_not_null())
             head_null = agg.filter(pl.col.timestamp < non_null['timestamp'][0])
@@ -423,6 +457,7 @@ def get_yaxis_params(
             fixedrange=False,
             tickfont=label_style,
             tickprefix=('$' if metric_format.get('prefix') == '$' else None),
+            ticksuffix=('%' if metric_format.get('percentage') else None),
             **grid_style,  # type: ignore
         )
 
