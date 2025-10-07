@@ -28,6 +28,7 @@ def plot_groups(
     total_visible: typing.Literal['legendonly', True, False] = True,
     set_ylim: bool = False,
     xaxis_hoverformat: str | None = None,
+    line_width: int | None = None,
     bar_outline_width: int | float = 0.0,
     bar_gap: int | float = 0,
     bar_x_center: bool = False,
@@ -53,6 +54,8 @@ def plot_groups(
         groups = groups[:n_groups]
     if colors is None:
         colors = {}
+    if line_width is None:
+        line_width = 3
 
     # initialize figure
     fig = go.Figure()
@@ -108,6 +111,7 @@ def plot_groups(
             color=colors.get(group),
             metric_format=metric_format,
             mode=mode,
+            line_width=line_width,
             bar_gap=bar_gap,
             bar_outline_width=bar_outline_width,
             bar_x_center=bar_x_center,
