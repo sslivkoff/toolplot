@@ -128,6 +128,7 @@ def plot_groups(
         xaxis=get_xaxis_params(
             data=data,
             xlim=xlim,
+            bar_x_center=bar_x_center,
             xaxis_hoverformat=xaxis_hoverformat,
             label_style=get_label_params(),
             grid_style=get_grid_params(mode=mode),
@@ -377,6 +378,7 @@ def get_xaxis_params(
     xaxis_hoverformat: str | None = None,
     label_style: dict[str, typing.Any] | None = None,
     xlim: tuple[float | int | None, float | int | None] | None = None,
+    bar_x_center: bool = False,
     grid_style: dict[str, typing.Any] | None = None,
     mode: PlotGroupsMode,
 ) -> dict[str, typing.Any]:
@@ -386,8 +388,12 @@ def get_xaxis_params(
         xmin, xmax = xlim
         if xmin is None:
             xmin = data['timestamp'].min()  # type: ignore
+            if bar_x_center:
+                xmin = xmin - (data['timestamp'].unique().sort()[1] - xmin)
         if xmax is None:
             xmax = data['timestamp'].max()  # type: ignore
+            if bar_x_center:
+                xmax = xmax + (xmax - data['timestamp'].unique().sort()[-2])
         xlim = (xmin, xmax)
     params = dict(
         range=xlim,
