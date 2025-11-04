@@ -32,6 +32,9 @@ def plot_groups(
     bar_outline_width: int | float = 0.0,
     bar_gap: int | float = 0,
     bar_x_center: bool = False,
+    fixed_x_range: bool = False,
+    fixed_y_range: bool = False,
+    range_slider: bool | dict[str, typing.Any] = True,
     show: bool | None = None,
     show_kwargs: dict[str, typing.Any] | None = None,
     png_path: str | None = None,
@@ -130,6 +133,8 @@ def plot_groups(
             xlim=xlim,
             bar_x_center=bar_x_center,
             xaxis_hoverformat=xaxis_hoverformat,
+            fixed_x_range=fixed_x_range,
+            range_slider=range_slider,
             label_style=get_label_params(),
             grid_style=get_grid_params(mode=mode),
             mode=mode,
@@ -142,6 +147,7 @@ def plot_groups(
             ylim=ylim,
             include_total=include_total,
             set_ylim=set_ylim,
+            fixed_y_range=fixed_y_range,
             label_style=get_label_params(),
             grid_style=get_grid_params(mode=mode),
             total=total,
@@ -381,6 +387,8 @@ def get_xaxis_params(
     bar_x_center: bool = False,
     grid_style: dict[str, typing.Any] | None = None,
     mode: PlotGroupsMode,
+    fixed_x_range: bool = False,
+    range_slider: bool | dict[str, typing.Any] = True,
 ) -> dict[str, typing.Any]:
     if xaxis_hoverformat is None:
         xaxis_hoverformat = '%Y-%m-%d'
@@ -395,16 +403,21 @@ def get_xaxis_params(
             if bar_x_center:
                 xmax = xmax + (xmax - data['timestamp'].unique().sort()[-2])
         xlim = (xmin, xmax)
+    if range_slider is True:
+        range_slider = dict(visible=True, thickness=0.1)
+    elif range_slider is False:
+        range_slider = {'visible': False}
     params = dict(
         range=xlim,
         title={'font': label_style},
         tickfont=label_style,
+        fixedrange=fixed_x_range,
         tickformatstops=[
             dict(dtickrange=['M12', None], value='%Y'),
             dict(dtickrange=['M1', 'M12'], value='%Y-%m'),
             dict(dtickrange=[None, 'M1'], value='%Y-%m-%d'),
         ],
-        rangeslider=dict(visible=True, thickness=0.1),
+        rangeslider=range_slider,
         type='date',
         hoverformat=xaxis_hoverformat,
         **grid_style,  # type: ignore
@@ -432,6 +445,7 @@ def get_yaxis_params(
     grid_style: dict[str, typing.Any] | None = None,
     total: pl.DataFrame | None = None,
     metric_column: str,
+    fixed_y_range: bool = False,
 ) -> dict[str, typing.Any]:
     if mode == 'area_%':
         return dict(
@@ -441,7 +455,7 @@ def get_yaxis_params(
                 'standoff': 24,
             },
             range=[-2, 103],
-            fixedrange=False,
+            fixedrange=fixed_y_range,
             tickfont=label_style,
             ticksuffix='%',
             dtick=20,
@@ -464,7 +478,7 @@ def get_yaxis_params(
         return dict(
             title={'text': metric_name, 'font': label_style, 'standoff': 24},
             range=ylim,
-            fixedrange=False,
+            fixedrange=fixed_y_range,
             tickfont=label_style,
             tickprefix=('$' if metric_format.get('prefix') == '$' else None),
             ticksuffix=('%' if metric_format.get('percentage') else None),
